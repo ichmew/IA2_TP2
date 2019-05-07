@@ -1,25 +1,30 @@
 
 %base de conocimientos
-thickness_treshold(body, X) :- X < 10.
-thickness_treshold(pipes, X) :- X < 8.
-thickness_treshold(joints, X) :- X < 6.
+
+thickness_treshold(body) :- thickness(body,T),T < 10.
+thickness_treshold(pipes) :- thickness(pipes,T),T < 8.
+thickness_treshold(joints) :- thickness(joints,T),T < 6.
 
 parts(body).
 parts(pipes).
 parts(joints).
 
-renderandpaint(P) :- parts(P),rusting(P,R),R=true,dazzling(P,D),D=true.
+renderandpaint(P) :- parts(P),rusting(P,R),R=true;dazzling(P,D),D=true. %si es true significa que hay que pintar osea que es malo 
+
+%Gran afirmacion que revisa todas las condiciones
+safety(valve) :- not(renderandpaint(body)),not(renderandpaint(joints)),not(renderandpaint(pipes)),thickness_treshold(body),thickness_treshold(pipes),thickness_treshold(joints).  
+
 %Ground Facts
 
-thickness(body, X) :- X is 1.
-thickness(pipes, X) :- X is 1.
-thickness(joints, X) :- X is 1.
+thickness(body, X) :- X is 7.
+thickness(pipes, X) :- X is 2.
+thickness(joints, X) :- X is 5.
 
 rusting(body, R) :- R = true.
 rusting(pipes, R) :- R = true.
 rusting(joints, R) :- R = false.
 
 dazzling(body, D) :- D = true.
-dazzling(pipes, D) :- D = true.
+dazzling(pipes, D) :- D = false.
 dazzling(joints, D) :- D = true.
 
