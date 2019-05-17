@@ -12,24 +12,24 @@ parts(joints).
 
 renderandpaint(P) :- parts(P),rusting(P,R),R=true;dazzling(P,D),D=true. %si es true significa que hay que pintar osea que es malo 
 %Gran afirmacion que revisa todas las condiciones
-safety(valve) :- not(renderandpaint(body)),not(renderandpaint(joints)),not(renderandpaint(pipes)),thickness_treshold(body),
-                thickness_treshold(pipes),thickness_treshold(joints).  
+safety(valve) :- not(renderandpaint(body)),not(renderandpaint(joints)),not(renderandpaint(pipes)),
+                thickness_treshold(body),thickness_treshold(pipes),thickness_treshold(joints).  
 quehago(valve):- renderandpaint(body),writeln('render and paint the body');renderandpaint(joints),writeln('render and paint the joints');renderandpaint(pipes),writeln('render and paint the pipes');
                 not(thickness_treshold(body)),writeln('report the body to the Technical Inspection Unit: Thickness problem');not(thickness_treshold(pipes)),writeln('report the pipes to the Technical Inspection Unit: Thickness problem');not(thickness_treshold(joints)),writeln('report the joints to the Technical Inspection Unit: Thickness problem').  
 
 %Ground Facts
 
-thickness(body, X) :- X is 7.
-thickness(pipes, X) :- X is 20.
-thickness(joints, X) :- X is 5.
+thickness(body, 7).
+thickness(pipes, 20).
+thickness(joints, 5).
 
-:- dynamic rusting/2.
-rusting(body,R) :- R = true.
-rusting(pipes,R) :- R = true.
-rusting(joints,R) :- R = false.
 
-:- dynamic dazzling/2.
-dazzling(body, D) :- D = false.
-dazzling(pipes, D) :- D = false.
-dazzling(joints, D) :- D = false.
+rusting(body,true).
+rusting(pipes,true).
+rusting(joints,false).
+
+
+dazzling(body, false).
+dazzling(pipes,false).
+dazzling(joints, false).
 
