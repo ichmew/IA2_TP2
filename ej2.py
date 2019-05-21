@@ -9,6 +9,11 @@ dt = 0.01
 t = 0
 
 # definición de reglas
+F = [['PF', 'PF', 'PF', 'Z', 'Z'],
+['PF', 'PP', 'PP', 'Z', 'NP'],
+['PF', 'PP', 'Z', 'NP', 'NF'],
+['PP', 'Z', 'NP', 'NP', 'NF'],
+['Z', 'Z', 'NF', 'NF', 'NF']]
 
 
 # definicion de umbrales conjutos borrosos
@@ -78,6 +83,4 @@ while t <= 27:
         vel1 = 4
         vel2 = 4
 
-    # Reglas Borrosas para el conjunto borroso fuerza
-    MatrizReglas = []
     # for i in range(5):
