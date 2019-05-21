@@ -1,16 +1,29 @@
 import math
 import numpy as np
 from enum import Enum
-import matplotlib
+from matplotlib import pyplot
 
 pos = 0
 vel = 0
 ac = 0
 dt = 0.2
+Fsal = 0
 t = 0
+l = 0.5
 M = 5
-m = 4
+m = 1
 Mt = M + m
+
+plot_fuerza = []
+plot_posicion = []
+plot_velocidad = []
+plot_aceleracion = []
+plot_tiempo = []
+plot_fuerza.append(Fsal)
+plot_posicion.append(pos)
+plot_velocidad.append(vel)
+plot_aceleracion.append(ac)
+plot_tiempo.append(t)
 
 # definición de reglas
 REGLAS = [['PF', 'PF', 'PF', 'Z', 'Z'],
@@ -139,3 +152,13 @@ while t <= 27:
     vel = new_vel
     pos = new_pos
     t = t + dt
+
+    plot_fuerza.append(Fsal)
+    plot_posicion.append(pos)
+    plot_velocidad.append(vel)
+    plot_aceleracion.append(ac)
+    plot_tiempo.append(t)
+
+
+pyplot.plot(plot_posicion, tiempo)
+pyplot.show
