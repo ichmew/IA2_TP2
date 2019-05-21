@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from enum import Enum
+import matplotlib
 
 pos = 0
 vel = 0
