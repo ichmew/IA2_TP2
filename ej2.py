@@ -6,24 +6,13 @@ from matplotlib import pyplot
 pos = 0
 vel = 0
 ac = 0
-dt = 0.2
 Fsal = 0
+dt = 0.2
 t = 0
 l = 0.5
 M = 5
-m = 1
+m = 4
 Mt = M + m
-
-plot_fuerza = []
-plot_posicion = []
-plot_velocidad = []
-plot_aceleracion = []
-plot_tiempo = []
-plot_fuerza.append(Fsal)
-plot_posicion.append(pos)
-plot_velocidad.append(vel)
-plot_aceleracion.append(ac)
-plot_tiempo.append(t)
 
 # definición de reglas
 REGLAS = [['PF', 'PF', 'PF', 'Z', 'Z'],
@@ -44,8 +33,8 @@ while t <= 27:
     # posicion
     if pos <= uNF:
         Pnf = 1
-        pos1 = [0, Pnf]
-        pos2 = [0, Pnf]
+        pos1 = [0, 1]
+        pos2 = [0, 1]
     if pos > uNF and pos <= uNP:
         Pnp = abs((pos - uNF) / (uNF - uNP))
         Pnf = 1 - Pnp
@@ -55,6 +44,7 @@ while t <= 27:
         else:
             pos1 = [0, Pnf]
             pos2 = [1, Pnp]
+
     if pos > uNP and pos <= 0:
         Pze = abs((pos - uNP) / uNP - 0)
         Pnp = 1 - Pze
@@ -84,13 +74,13 @@ while t <= 27:
             pos2 = [4, Ppf]
     if pos >= uPF:
         Ppf = 1
-        pos1 = [4, Ppf]
-        pos2 = [4, Ppf]
+        pos1 = [4, 1]
+        pos2 = [4, 1]
     # velocidad
     if vel <= uNF:
         Vnf = 1
-        vel1 = [0, Vnf]
-        vel2 = [0, Vnf]
+        vel1 = [0, 1]
+        vel2 = [0, 1]
     if vel > uNF and vel <= uNP:
         Vnp = abs((vel - uNF) / (uNF - uNP))
         Vnf = 1 - Vnp
@@ -129,38 +119,45 @@ while t <= 27:
             vel2 = [4, Vpf]
     if vel >= uPF:
         Vpf = 1
-        vel1 = [4, Vpf]
-        vel2 = [4, Vpf]
+        vel1 = [4, 1]
+        vel2 = [4, 1]
 
-    # Cálculo de salida borrosa
-    F1 = REGLAS[pos1[0]][vel1[0]]
-    F2 = REGLAS[pos2[0]][vel2[0]]
+    # Calculo de salidas borrosas
 
+    F1 = REGLAS[pos1[0], vel1[0]]
+    F2 = REGLAS[pos2[0], vel2[0]]
+    # calculo de antecedentes por norma T
     peso1 = min(pos1[1], vel1[1])
     peso2 = min(pos2[1], vel2[1])
 
-    
-
-    # Desborrosificación por media de centros (weighted average)
+    # desborrosificacion por media de centros (weighted average)
     Fsal = (F1 * peso1 + F2 * peso2) / (peso1 + peso2)
 
-    num = g * sin(pos) + cos(pos) * (- Fsal - m * l * vel ** 2 * sin(pos)) / Mt
+    num = g * sin(pos) + cos(pos) * (- F - m * l * vel ** 2 * sin(pos)) / Mt
     den = l * (4 / 3 - m * (cos(pos)) ** 2 / Mt)
     new_ac = num / den
     new_vel = vel + ac * dt
     new_pos = pos + vel * dt + ac * dt ** 2 / 2
 
+    plotposicion.append(pos)
+    plottiempo.append(t)
+    plotvelocidad.append(vel)
+    plotaceleracion.append(ac)
+    plotfuerza.append(Fsal)
     ac = new_ac
     vel = new_vel
     pos = new_pos
     t = t + dt
 
-    plot_fuerza.append(Fsal)
-    plot_posicion.append(pos)
-    plot_velocidad.append(vel)
-    plot_aceleracion.append(ac)
-    plot_tiempo.append(t)
+plotposicion.append(pos)
+plottiempo.append(t)
+plotvelocidad.append(vel)
+plotaceleracion.append(ac)
+plotfuerza.append(Fsal)
 
+pyplot.plot(plottiempo, plotposicion)
+pyplot.plot(plottiempo, plotvelocidad)
+pyplot.plot(plottiempo, plotaceleracion)
+pyplot.plot(plottiempo, plotfuerza)
 
-pyplot.plot(plot_posicion, tiempo)
-pyplot.show
+pyplot.show()
