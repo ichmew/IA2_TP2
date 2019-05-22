@@ -13,6 +13,7 @@ l = 0.5
 M = 5
 m = 1
 Mt = M + m
+g = 9.8
 
 plot_fuerza = []
 plot_posicion = []
@@ -32,6 +33,13 @@ REGLAS = [['PF', 'PF', 'PF', 'Z', 'Z'],
           ['PP', 'Z', 'NP', 'NP', 'NF'],
           ['Z', 'Z', 'NF', 'NF', 'NF']]
 
+Valores_Fuerza = {
+    'NF': -10,
+    'NP': -5,
+    'Z': 0,
+    'PP': 5,
+    'PF': 10
+}
 
 # definicion de umbrales conjutos borrosos
 uNF = -20
@@ -135,17 +143,18 @@ while t <= 27:
     # Cálculo de salida borrosa
     F1 = REGLAS[pos1[0]][vel1[0]]
     F2 = REGLAS[pos2[0]][vel2[0]]
+    F1 = Valores_Fuerza.get(F1)
+    F2 = Valores_Fuerza.get(F2)
 
     peso1 = min(pos1[1], vel1[1])
     peso2 = min(pos2[1], vel2[1])
 
-    
-
     # Desborrosificación por media de centros (weighted average)
     Fsal = (F1 * peso1 + F2 * peso2) / (peso1 + peso2)
-
-    num = g * sin(pos) + cos(pos) * (- Fsal - m * l * vel ** 2 * sin(pos)) / Mt
-    den = l * (4 / 3 - m * (cos(pos)) ** 2 / Mt)
+    seno = math.sin(pos)
+    coseno = math.cos(pos)
+    num = g * seno + coseno * (- Fsal - m * l * vel ** 2 * seno) / Mt
+    den = l * (4 / 3 - m * (coseno) ** 2 / Mt)
     new_ac = num / den
     new_vel = vel + ac * dt
     new_pos = pos + vel * dt + ac * dt ** 2 / 2
