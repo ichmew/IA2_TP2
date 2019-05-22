@@ -3,7 +3,8 @@ import numpy as np
 from enum import Enum
 from matplotlib import pyplot
 
-pos = 0
+g = 9.8
+pos = 30
 vel = 0
 ac = 0
 Fsal = 0
@@ -14,12 +15,26 @@ M = 5
 m = 4
 Mt = M + m
 
+plot_fuerza = []
+plot_posicion = []
+plot_velocidad = []
+plot_aceleracion = []
+plot_tiempo = []
+
 # definición de reglas
 REGLAS = [['PF', 'PF', 'PF', 'Z', 'Z'],
           ['PF', 'PP', 'PP', 'Z', 'NP'],
           ['PF', 'PP', 'Z', 'NP', 'NF'],
           ['PP', 'Z', 'NP', 'NP', 'NF'],
           ['Z', 'Z', 'NF', 'NF', 'NF']]
+
+Valores_Fuerza = {
+    'NF': -10,
+    'NP': -5,
+    'Z': 0,
+    'PP': 5,
+    'PF': 10
+}
 
 
 # definicion de umbrales conjutos borrosos
@@ -124,8 +139,10 @@ while t <= 27:
 
     # Calculo de salidas borrosas
 
-    F1 = REGLAS[pos1[0], vel1[0]]
-    F2 = REGLAS[pos2[0], vel2[0]]
+    F1 = REGLAS[pos1[0]][vel1[0]]
+    F2 = REGLAS[pos2[0]][vel2[0]]
+    F1 = Valores_Fuerza.get(F1)
+    F2 = Valores_Fuerza.get(F2)
     # calculo de antecedentes por norma T
     peso1 = min(pos1[1], vel1[1])
     peso2 = min(pos2[1], vel2[1])
@@ -133,31 +150,49 @@ while t <= 27:
     # desborrosificacion por media de centros (weighted average)
     Fsal = (F1 * peso1 + F2 * peso2) / (peso1 + peso2)
 
-    num = g * sin(pos) + cos(pos) * (- F - m * l * vel ** 2 * sin(pos)) / Mt
-    den = l * (4 / 3 - m * (cos(pos)) ** 2 / Mt)
+    seno = math.sin(pos)
+    coseno = math.cos(pos)
+    num = g * seno + coseno * (- Fsal - m * l * vel ** 2 * seno) / Mt
+    den = l * (4 / 3 - m * (coseno) ** 2 / Mt)
     new_ac = num / den
     new_vel = vel + ac * dt
     new_pos = pos + vel * dt + ac * dt ** 2 / 2
 
-    plotposicion.append(pos)
-    plottiempo.append(t)
-    plotvelocidad.append(vel)
-    plotaceleracion.append(ac)
-    plotfuerza.append(Fsal)
+    plot_posicion.append(pos)
+    plot_tiempo.append(t)
+    plot_velocidad.append(vel)
+    plot_aceleracion.append(ac)
+    plot_fuerza.append(Fsal)
     ac = new_ac
     vel = new_vel
     pos = new_pos
     t = t + dt
 
-plotposicion.append(pos)
-plottiempo.append(t)
-plotvelocidad.append(vel)
-plotaceleracion.append(ac)
-plotfuerza.append(Fsal)
+plot_posicion.append(pos)
+plot_tiempo.append(t)
+plot_velocidad.append(vel)
+plot_aceleracion.append(ac)
+plot_fuerza.append(Fsal)
 
-pyplot.plot(plottiempo, plotposicion)
-pyplot.plot(plottiempo, plotvelocidad)
-pyplot.plot(plottiempo, plotaceleracion)
-pyplot.plot(plottiempo, plotfuerza)
+pyplot.figure(1)
+pyplot.plot(plot_tiempo, plot_posicion)
+pyplot.ylabel('Posicion')
+pyplot.xlabel('Tiempo')
+
+pyplot.figure(2)
+pyplot.plot(plot_tiempo, plot_velocidad)
+pyplot.ylabel('Velocidad')
+pyplot.xlabel('Tiempo')
+
+
+pyplot.figure(3)
+pyplot.plot(plot_tiempo, plot_aceleracion)
+pyplot.ylabel('Aceleracion')
+pyplot.xlabel('Tiempo')
+
+pyplot.figure(4)
+pyplot.plot(plot_tiempo, plot_fuerza)
+pyplot.ylabel('Fuerza')
+pyplot.xlabel('Tiempo')
 
 pyplot.show()
