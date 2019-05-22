@@ -171,5 +171,23 @@ while t <= 27:
     plot_tiempo.append(t)
 
 
-pyplot.plot(plot_posicion, tiempo)
-pyplot.show
+pyplot.figure(1)
+pyplot.plot(plot_tiempo, plot_posicion)
+pyplot.ylabel('Posicion')
+pyplot.xlabel('Tiempo')
+
+pyplot.figure(2)
+pyplot.plot(plot_tiempo, plot_velocidad)
+pyplot.ylabel('Velocidad')
+pyplot.xlabel('Tiempo')
+
+
+pyplot.figure(3)
+pyplot.plot(plot_tiempo, plot_aceleracion)
+pyplot.ylabel('Aceleracion')
+pyplot.xlabel('Tiempo')
+
+pyplot.figure(4)
+pyplot.plot(plot_tiempo, plot_fuerza)
+pyplot.ylabel('Fuerza')
+pyplot.xlabel('Tiempo')
