@@ -6,9 +6,9 @@ parts(body).
 parts(pipes).
 parts(joints).
 
-thickness_treshold(body) :- thickness(body,T),T < 10.
-thickness_treshold(pipes) :- thickness(pipes,T),T < 8.
-thickness_treshold(joints) :- thickness(joints,T),T < 6.
+thickness_treshold(body) :- thickness(body,T),T > 5.
+thickness_treshold(pipes) :- thickness(pipes,T),T > 4.
+thickness_treshold(joints) :- thickness(joints,T),T > 3.
 
 
 renderandpaint(P) :- parts(P),rusting(P,true);dazzling(P,true). %si es true significa que hay que pintar osea que es malo 
@@ -58,7 +58,7 @@ setOpenPosition(SV) :- safetyValve(SV), vsc(SV), not(rvwp(SV)), not(cge(SV)).
 appropiateSafetyFunction(SV) :- safetyValve(SV), rvwp(SV), not(cge(SV)).
 
 %Gran afirmacion que revisa todas las condiciones
-safety(valve) :- not(renderandpaint(body)),not(renderandpaint(joints)),not(renderandpaint(pipes)),
+safety(estacion) :- not(renderandpaint(body)),not(renderandpaint(joints)),not(renderandpaint(pipes)),
                 thickness_treshold(body),thickness_treshold(pipes),thickness_treshold(joints),
                 soap_test(joints),
                 not(cleanAndFix(sv1)),not(cleanAndFix(sv2)),not(cleanAndFix(sv3)),
@@ -73,7 +73,7 @@ safety(valve) :- not(renderandpaint(body)),not(renderandpaint(joints)),not(rende
                 not(cleanAndTroubleshoot(sv1)),not(cleanAndTroubleshoot(sv2)),not(cleanAndTroubleshoot(sv3)),
                 not(setOpenPosition(sv1)),not(setOpenPosition(sv2)),not(setOpenPosition(sv3)),
                 appropiateSafetyFunction(sv1),appropiateSafetyFunction(sv2),appropiateSafetyFunction(sv3).
-quehago(valve):- renderandpaint(body),writeln('render and paint the body');renderandpaint(joints),writeln('render and paint the joints');renderandpaint(pipes),writeln('render and paint the pipes');
+quehago(estacion):- renderandpaint(body),writeln('render and paint the body');renderandpaint(joints),writeln('render and paint the joints');renderandpaint(pipes),writeln('render and paint the pipes');
                 not(thickness_treshold(body)),writeln('report the body to the Technical Inspection Unit: Thickness problem');not(thickness_treshold(pipes)),writeln('report the pipes to the Technical Inspection Unit: Thickness problem');not(thickness_treshold(joints)),writeln('report the joints to the Technical Inspection Unit: Thickness problem');
                 not(soap_test(joints)),leakage_solution(joints);
                 cleanAndFix(sv1),writeln('Clean And Fix the faults of the sensing pipes of sv1');cleanAndFix(sv2),writeln('Clean And Fix the faults of the sensing pipes of sv2');cleanAndFix(sv3),writeln('Clean And Fix the faults of the sensing pipes of sv3');
