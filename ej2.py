@@ -4,11 +4,11 @@ from enum import Enum
 from matplotlib import pyplot
 
 g = 9.8
-pos = math.pi / 12
+pos = math.pi/1.5
 vel = 0
 ac = 0
 Fsal = 0
-dt = 0.001
+dt = 0.0001
 t = 0
 l = 1
 M = 3
@@ -20,38 +20,33 @@ plot_posicion = []
 plot_velocidad = []
 plot_aceleracion = []
 plot_tiempo = []
-plot_posicion.append(pos)
-plot_tiempo.append(t)
-plot_velocidad.append(vel)
-plot_aceleracion.append(ac)
-plot_fuerza.append(Fsal)
 
-# definición de reglas (0,0) = pos:NF, vel:NF
-REGLAS = [['PF', 'PF', 'PF', 'PP', 'Z'],
-          ['PF', 'PP', 'PP', 'Z', 'NP'],
+# definición de reglas
+REGLAS = [['PF', 'PF', 'PF', 'Z', 'Z'],
+          ['PF', 'PP', 'PP', 'Z', 'Z'],
           ['PF', 'PP', 'Z', 'NP', 'NF'],
-          ['PP', 'Z', 'NP', 'NP', 'NF'],
-          ['Z', 'NP', 'NF', 'NF', 'NF']]
+          ['Z', 'Z', 'NP', 'NP', 'NF'],
+          ['Z', 'Z', 'NF', 'NF', 'NF']]
 
 Valores_Fuerza = {
-    'NF': -6,
-    'NP': -2,
+    'NF': -50,
+    'NP': -10,
     'Z': 0,
-    'PP': 2,
-    'PF': 6
+    'PP': 10,
+    'PF': 50
 }
 
 
 # definicion de umbrales conjutos borrosos
-uNF = - math.pi / 2
+uNF = - math.pi / 3
 uNP = - math.pi / 6
 uPP = math.pi / 6
-uPF = math.pi / 2
+uPF = math.pi / 3
 
-mNF = - math.pi / 12
-mNP = - math.pi / 36
-mPP = math.pi / 36
-mPF = math.pi / 12
+mNF = - math.pi / 2
+mNP = - math.pi / 4
+mPP = math.pi / 4
+mPF = math.pi / 2
 
 while t <= 27:
     # Asignacion de los conjuntos borrosos
@@ -150,8 +145,6 @@ while t <= 27:
 
     F1 = REGLAS[pos1[0]][vel1[0]]
     F2 = REGLAS[pos2[0]][vel2[0]]
-    # print(F1, F2)
-
     F1 = Valores_Fuerza.get(F1)
     F2 = Valores_Fuerza.get(F2)
     # calculo de antecedentes por norma T
@@ -159,8 +152,7 @@ while t <= 27:
     peso2 = min(pos2[1], vel2[1])
 
     # desborrosificacion por media de centros (weighted average)
-    # Fsal = (F1 * peso1 + F2 * peso2) / (peso1 + peso2)
-    # print(Fsal)
+    #Fsal = (F1 * peso1 + F2 * peso2) / (peso1 + peso2)
 
     seno = math.sin(pos)
     coseno = math.cos(pos)
@@ -170,30 +162,29 @@ while t <= 27:
     new_vel = vel + ac * dt
     new_pos = pos + vel * dt + (ac * dt ** 2) / 2
 
-    ac = new_ac
-    vel = new_vel
-    pos = new_pos
-    '''if pos > math.pi:
-        print(str(pos), "", str(vel), "", str(ac), "")
-        pos = pos - 2 * math.pi
-        print(str(pos), "", str(vel), "", str(ac))
-        print("")
-        # vel = - vel
-        # ac = - ac
-    elif pos < -math.pi:
-        print(str(pos), "", str(vel), "", str(ac), "")
-        pos = pos + 2 * math.pi
-        print(str(pos), "", str(vel), "", str(ac))
-        print("")
-        # vel = - vel
-        # ac = - ac'''
-    t = t + dt
-
     plot_posicion.append(pos)
     plot_tiempo.append(t)
     plot_velocidad.append(vel)
     plot_aceleracion.append(ac)
     plot_fuerza.append(Fsal)
+    ac = new_ac
+    vel = new_vel
+    pos = new_pos
+    """if pos > math.pi:
+        pos = pos - 2 * math.pi
+    elif pos < -math.pi:
+        pos = pos + 2 * math.pi
+    if vel > math.pi:
+        vel = - vel
+    elif vel < -math.pi:
+        vel = - vel"""
+    t = t + dt
+
+plot_posicion.append(pos)
+plot_tiempo.append(t)
+plot_velocidad.append(vel)
+plot_aceleracion.append(ac)
+plot_fuerza.append(Fsal)
 
 pyplot.figure(1)
 pyplot.plot(plot_tiempo, plot_posicion)
