@@ -11,7 +11,7 @@ if datostranspuestos[19][3]== '':
     print('esto es nan')
 
 
-datostranspuestosfiltrados = [v for v in datostranspuestos if v[3] != '']
+datostranspuestosfiltrados = np.array([v for v in datostranspuestos if v[3] != ''])
 
 print(datostranspuestosfiltrados)
 
