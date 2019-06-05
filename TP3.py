@@ -22,7 +22,7 @@ EPSILON = 0.4
 EJEMPLOS = 1000
 EJEMPLOS_TEST = 100
 EPOCHS = 10000
-CANTIDAD_ENTRADAS_SALIDAS= #depende del dataset, es para el t
+CANTIDAD_ENTRADAS_SALIDAS = 888888888 #depende del dataset, es para el t
 
 
 # Función de activación de la capa de entrada
@@ -56,14 +56,16 @@ def calculo_salidas(Wji, Wkj, x, y, z):
         for i in range(0, NEURONAS_ENTRADA):
         	entrada_y += Wji[i][j]*x[i]
 		# Sesgo de las neuronas de la capa oculta
-		entrada_y -= Wji[NEURONAS_ENTRADA - 1][j]
+        
+        entrada_y -= Wji[NEURONAS_ENTRADA - 1][j]
 		# Valor de salida de la neurona j
-		y[j] = f(entrada_y)
+		
+        y[j] = f(entrada_y)
 
 	# Cálculo de salidas de la capa de salida
-    for k in range(0, NEURONAS_SALIDA)
+    for k in range(0, NEURONAS_SALIDA):
         entrada_z = 0
-        for j in range(0, NEURONAS_CAPA_OCULTA)
+        for j in range(0, NEURONAS_CAPA_OCULTA):
             entrada_z = Wkj[j][k]*y[j]
         # Sesgo de las neuronas de la cada de salida
         entrada_z -= Wkj[NEURONAS_CAPA_OCULTA - 1][k]
@@ -83,7 +85,8 @@ def bp(Wji, Wjk, x, y, z, t):
         delta_mu_k[k] = (t[k] - g(h_mu_k)) * g_derivada(h_mu_k)
         for j in range(0, NEURONAS_CAPA_OCULTA):
             Wkj[j][k] += EPSILON * delta_mu_k[k] * y[j]
-    	Wkj[NEURONAS_CAPA_OCULTA][k] += EPSILON * delta_mu_k[k] * -1
+    	
+        Wkj[NEURONAS_CAPA_OCULTA][k] += EPSILON * delta_mu_k[k] * -1
     # Actualización pesos capa entrada-capa oculta
     for j in range(0, NEURONAS_CAPA_OCULTA):
         h_mu_j = 0
@@ -105,9 +108,9 @@ def calcula_LMS(ejemplos,Wji,Wkj,EJEMPLOS):
     cantidad_ejemplos_entrenamiento = EJEMPLOS - cantidad_ejemplos_test
     
     error_2 = 0
-    for mu in range (cantidad_ejemplos_entrenamiento, EJEMPLOS)
+    for mu in range (cantidad_ejemplos_entrenamiento, EJEMPLOS):
         # Generamos el arreglo de las neuronas de entrada x a partir del ejemplo indicado
-        for i in range (0, NEURONAS_ENTRADA)
+        for i in range (0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
     
         # Calcular salida de la red
@@ -116,7 +119,7 @@ def calcula_LMS(ejemplos,Wji,Wkj,EJEMPLOS):
         # Vector de salidas deseada
         t[int(ejemplos[mu][CANTIDAD_ENTRADAS_SALIDAS-1])]=1
     
-        for k in range (0, NEURONAS_SALIDA)
+        for k in range (0, NEURONAS_SALIDA):
             error_2 += pow(t[k] - z[k], 2)
     
     error_2_medio = error_2 / (cantidad_ejemplos_test)
@@ -152,17 +155,15 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, cantidad_total_ejemplos, mostrar_ent
         if mostrar_entradas_salidas == 1:
             print((ejemplo + 1), '. z=[')
         for k in range(0, NEURONAS_SALIDA):
-            error += 
+            error += error
 
-def genera_dataset(x, t):
+#def genera_dataset(x, t):
     
-
-
 t = np.zeros(EJEMPLOS, NEURONAS_SALIDA)
 Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
 Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
      
-genera_dataset(x, t)
+#genera_dataset(x, t)
 
 
 
