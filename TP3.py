@@ -7,7 +7,7 @@
 # Creado el 04/06/2019
 # Inteligencia Artificial II - Ingeniería en Mecatronica
 # Facultad de Ingeniería - Universidad Nacional de Cuyo
-# Autor: Senastian Giunta, P8 capo, Ichmew
+# Autor: Sebastian Giunta, P8 capo, Ichmew
 #
 
 import math
