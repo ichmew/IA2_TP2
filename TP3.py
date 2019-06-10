@@ -24,9 +24,18 @@ EJEMPLOS = 1000
 EJEMPLOS_TEST = 100
 EPOCHS = 10000
 CANTIDAD_ENTRADAS_SALIDAS = 888888888  # depende del dataset, es para el t
+mostrar_e_s = 1
 
 
-# Función de activación de la capa de entrada
+# Función de activación Heavyside de la capa de entrada
+def Heavy(x):
+    if x >= 0:
+        return 1
+    else:
+        return 0
+
+
+# Función de activación sigmoide de la capa de entrada
 def f(x):
     return 1 / 1 + math.exp(-x)
 
@@ -55,16 +64,16 @@ z = np.zeros(NEURONAS_SALIDA)
 
 
 def calculo_salidas(Wji, Wkj, x, y, z):
+    # Se encarga de calcular la salida z de cada neurona
+
     # Cálculo de salidas de la capa oculta
     for j in range(0, NEURONAS_CAPA_OCULTA):
         entrada_y = 0
         for i in range(0, NEURONAS_ENTRADA):
             entrada_y += Wji[i][j] * x[i]
         # Sesgo de las neuronas de la capa oculta
-
         entrada_y -= Wji[NEURONAS_ENTRADA - 1][j]
         # Valor de salida de la neurona j
-
         y[j] = f(entrada_y)
 
     # Cálculo de salidas de la capa de salida
@@ -78,8 +87,9 @@ def calculo_salidas(Wji, Wkj, x, y, z):
         z[k] = g(entrada_z)
 
 
-# Actualización de pesos mediante Back Propagation
 def bp(Wji, Wjk, x, y, z, t):
+    # Se encarga de actualizar los pesos sinápticos
+
     delta_mu_k = []
     # Actualización pesos capa oculta-capa salida
     for k in range(0, NEURONAS_SALIDA):
@@ -108,15 +118,17 @@ def bp(Wji, Wjk, x, y, z, t):
 
 
 def calcula_LMS(ejemplos, Wji, Wkj, EJEMPLOS):
-    # Ejemplos es la matriz de las dataset de donde sacamos las entradas
+    # Se encarga del validation??
+
+    # ejemplos es la matriz de las dataset de donde sacamos las entradas
     # y EJEMPLOS es la cantidad todal de ejemplos
     cant_ej_test = int(PORCENTAJE_EJEMPLOS_TEST / 100.0) * EJEMPLOS
     cant_ej_training = EJEMPLOS - cant_ej_test
 
     error_2 = 0
     for mu in range(cant_ej_training, EJEMPLOS):
-        # Generamos el arreglo de las neuronas de entrada x a partir
-        # del ejemplo indicado
+        # Probamos el rendimiento de la red en los ejemplos del dataset que
+        # estan A PARTIR del ultimo ejemplo de entrenamiento
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
 
@@ -129,7 +141,7 @@ def calcula_LMS(ejemplos, Wji, Wkj, EJEMPLOS):
         for k in range(0, NEURONAS_SALIDA):
             error_2 += pow(t[k] - z[k], 2)
 
-    error_2_medio = error_2 / (cant_ej_test)
+    error_2_medio = error_2 / (cant_ej_test)  # Falta dividir por 2??
 
     return error_2_medio
 
@@ -168,9 +180,9 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, cant_total_ej, mostrar_e_s):
             for k in range(0, NEURONAS_SALIDA):
                 print(str(t[k]))
             print(']\n')
-            ejemplo +=
+            ejemplo = ejemplo + 1
         if error == 0:
-            aciertos +=
+            aciertos = aciertos + 1
     # Calculamos la tasa de aciertos
     tasa_aciertos = aciertos / cant_ej_test
 
@@ -190,13 +202,14 @@ for e in range(0, EPOCHS):
     for mu in range(0, EJEMPLOS - EJEMPLOS_TEST):
         calculo_salidas(Wji, Wkj, x[mu], y, z)
         bp(Wji, Wkj, x[mu], y, z, t[mu])
-    error = 0
-    waiting = input()
-    # TEST
-    for mu in range(EJEMPLOS - EJEMPLOS_TEST, EJEMPLOS):
-        calculo_salidas(Wji, Wkj, x[mu], y, z)
-        error +=
-
+    calcula_rendimiento(ejemplos, Wji, Wkj, cant_total_ej, mostrar_e_s)
     print('Epoch ', e, ': ', tasa_aciertos, '\n')
+
+# waiting = input()
+# TEST / VALIDATION
+error = 0
+for mu in range(EJEMPLOS - EJEMPLOS_TEST, EJEMPLOS):
+    calculo_salidas(Wji, Wkj, x[mu], y, z)
+    error +=
 
 # print('\nTest final:')
