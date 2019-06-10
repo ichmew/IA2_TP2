@@ -7,7 +7,7 @@
 # Creado el 04/06/2019
 # Inteligencia Artificial II - Ingeniería en Mecatronica
 # Facultad de Ingeniería - Universidad Nacional de Cuyo
-# Autor: Sebastian Giunta, P8 capo, Ichmew
+# Autor: Senastian Giunta, P8 capo, Ichmew
 #
 
 import math
@@ -158,9 +158,22 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, cant_total_ej, mostrar_e_s):
         # Verificación de aciertos
         error = 0
         if mostrar_e_s == 1:
-            print((ejemplo + 1), '. z=[')
+            print(str((ejemplo + 1)), '. z=[')
         for k in range(0, NEURONAS_SALIDA):
-            error += error
+            error += round(pow(pow(t[k] - z[k], 2), 0.5))
+            if mostrar_e_s == 1:
+                print(str(z[k]))
+        if mostrar_e_s == 1:
+            print('] -- t=[')
+            for k in range(0, NEURONAS_SALIDA):
+                print(str(t[k]))
+            print(']\n')
+            ejemplo = ejemplo + 1
+        if error == 0:
+            aciertos = aciertos + 1
+    # Calculamos la tasa de aciertos
+    tasa_aciertos = aciertos / cant_ej_test
+
 
 # def genera_dataset(x, t):
 
