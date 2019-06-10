@@ -168,17 +168,35 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, cant_total_ej, mostrar_e_s):
             for k in range(0, NEURONAS_SALIDA):
                 print(str(t[k]))
             print(']\n')
-            ejemplo = ejemplo + 1
+            ejemplo +=
         if error == 0:
-            aciertos = aciertos + 1
+            aciertos +=
     # Calculamos la tasa de aciertos
     tasa_aciertos = aciertos / cant_ej_test
 
 
 # def genera_dataset(x, t):
 
+
+# MAIN ------------------------------------------------------------------------
 t = np.zeros(EJEMPLOS, NEURONAS_SALIDA)
 Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
 Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
 
 # genera_dataset(x, t)
+
+for e in range(0, EPOCHS):
+    # TRAINING
+    for mu in range(0, EJEMPLOS - EJEMPLOS_TEST):
+        calculo_salidas(Wji, Wkj, x[mu], y, z)
+        bp(Wji, Wkj, x[mu], y, z, t[mu])
+    error = 0
+    waiting = input()
+    # TEST
+    for mu in range(EJEMPLOS - EJEMPLOS_TEST, EJEMPLOS):
+        calculo_salidas(Wji, Wkj, x[mu], y, z)
+        error +=
+
+    print('Epoch ', e, ': ', tasa_aciertos, '\n')
+
+# print('\nTest final:')
