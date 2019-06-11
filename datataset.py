@@ -38,19 +38,18 @@ def genera_data():
     df = pd.DataFrame(datostranspuestosfiltradoscasteados)
     df.to_csv('datos_filtrados_train.csv')
 
-    ejemplos = np.zeros([len(datostranspuestosfiltrados), len(datostranspuestosfiltrados[0]) - 1])
-    t = np.zeros(len(datostranspuestosfiltrados))
+    ejemplos = np.zeros([len(datostranspuestosfiltrados), len(datostranspuestosfiltrados[0])-1])
+    dataset_t = np.zeros(len(datostranspuestosfiltrados))
 
     for i in range(0, len(datostranspuestosfiltradoscasteados)):
-        t[i] = datostranspuestosfiltradoscasteados[i][4]
-        for j in range(0, len(datostranspuestosfiltradoscasteados[0]) - 1):
-            ejemplos[i][j] = datostranspuestosfiltradoscasteados[i][j]
+        dataset_t[i] = datostranspuestosfiltradoscasteados[i][4]
+        for j in range(0, len(datostranspuestosfiltradoscasteados[0])-1):
+            ejemplos[i][j] = datostranspuestosfiltradoscasteados[i][j]     
 
-    return t, ejemplos
+    return dataset_t, ejemplos
 
-
+    
 def dataset_size():
-        dataset_t, ejemplos= genera_data()
+        dataset_t, ejemplos = genera_data()
         cant_datos = len(ejemplos)
         return cant_datos 
-
