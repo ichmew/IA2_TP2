@@ -163,6 +163,7 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s):
     y = np.zeros(NEURONAS_CAPA_OCULTA)
     z = np.zeros(NEURONAS_SALIDA)
     for mu in range(0, cant_ej_training):
+        t = dataset_t[mu][:]
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
         calculo_salidas(Wji, Wkj, x, y, z)
