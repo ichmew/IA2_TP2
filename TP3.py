@@ -63,7 +63,7 @@ x = np.zeros(NEURONAS_ENTRADA)
 y = np.zeros(NEURONAS_CAPA_OCULTA)
 z = np.zeros(NEURONAS_SALIDA)
 cant_ej_training = EJEMPLOS_CANT - EJEMPLOS_TEST
-tasa_aciertos= 0
+tasa_aciertos = 0
 
 
 def calculo_salidas(Wji, Wkj, x, y, z):
@@ -243,7 +243,7 @@ t = np.zeros[EJEMPLOS_CANT, NEURONAS_SALIDA]
 Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
 Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
 
-dataset_t,ejemplos=genera_data()
+dataset_t, ejemplos = genera_data()
 
 
 for e in range(0, EPOCHS):
