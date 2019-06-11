@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
 
+
 def genera_data():
 
     datos = pd.read_csv('titanic_train.csv', header=0, na_filter=False)
 
-    datosfiltrados=[datos['Sex'],datos['Age'],datos['Pclass'],datos['Embarked'],datos['Survived']]
+    datosfiltrados = [datos['Sex'], datos['Age'], datos['Pclass'], datos['Embarked'], datos['Survived']]
     datostranspuestos = np.transpose(datosfiltrados)
 
     datostranspuestosfiltrados = np.array([v for v in datostranspuestos if v[1] != ''])
@@ -37,13 +38,12 @@ def genera_data():
     df = pd.DataFrame(datostranspuestosfiltradoscasteados)
     df.to_csv('datos_filtrados_train.csv')
 
-    ejemplos = np.zeros([len(datostranspuestosfiltrados), len(datostranspuestosfiltrados[0])-1])
+    ejemplos = np.zeros([len(datostranspuestosfiltrados), len(datostranspuestosfiltrados[0]) - 1])
     t = np.zeros(len(datostranspuestosfiltrados))
 
     for i in range(0, len(datostranspuestosfiltradoscasteados)):
         t[i] = datostranspuestosfiltradoscasteados[i][4]
-        for j in range(0, len(datostranspuestosfiltradoscasteados[0])-1):
-            ejemplos[i][j] = datostranspuestosfiltradoscasteados[i][j]     
+        for j in range(0, len(datostranspuestosfiltradoscasteados[0]) - 1):
+            ejemplos[i][j] = datostranspuestosfiltradoscasteados[i][j]
 
     return t, ejemplos
-
