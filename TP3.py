@@ -21,39 +21,44 @@ NEURONAS_ENTRADA = 4
 NEURONAS_CAPA_OCULTA = 15
 NEURONAS_SALIDA = 1
 PORCENTAJE_EJEMPLOS_TEST = 5.0
-EPSILON = 0.4
+EPSILON = 0.05
 EJEMPLOS_CANT = dataset_size()
 EJEMPLOS_TEST = int(dataset_size() * 0.1)
-EPOCHS = 20
+EPOCHS = 8
 CANTIDAD_ENTRADAS_SALIDAS = 1  # depende del dataset, es para el t
 mostrar_e_s = 0
 
 
 # Función de activación Heavyside de la capa de entrada
-def Heavy(x):
-    if x >= 0:
+def Heavy(nox0):
+    if nox0 >= 0:
         return 1
     else:
         return 0
 
 
+# Derivada de la función de activación Heavyside de la capa de entrada
+def H_derivada(nox4):
+    return 1
+
+
 # Función de activación sigmoide de la capa de entrada
-def f(x):
-    return 1 / 1 + math.exp(-x)
+def f(nox1):
+    return 1 / (1 + math.exp(-nox1))
 
 
 # Derivada de la función de activación de la capa de entrada
-def f_derivada(x):
-    return math.exp(-x) / ((1 + math.exp(-x)) * (1 + math.exp(-x)))
+def f_derivada(nox2):
+    return math.exp(-nox2) / ((1 + math.exp(-nox2)) * (1 + math.exp(-nox2)))
 
 
 # Función de activación de la capa oculta
-def g(x):
-    return x
+def g(nox3):
+    return nox3
 
 
 # Derivada de la función de activación de la capa oculta
-def g_derivada(x):
+def g_derivada(nox3):
     return 1
 
 
@@ -155,6 +160,8 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s):
 
     aciertos = 0
     ejemplo = 0
+    y = np.zeros(NEURONAS_CAPA_OCULTA)
+    z = np.zeros(NEURONAS_SALIDA)
     for mu in range(0, cant_ej_training):
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
@@ -200,6 +207,8 @@ def calcula_final(ejemplos, Wji, Wkj, mostrar_e_s):
     print('\nTEST INICIALIZADO')
     aciertos = 0
     ejemplo = 0
+    y = np.zeros(NEURONAS_CAPA_OCULTA)
+    z = np.zeros(NEURONAS_SALIDA)
     for mu in range(cant_ej_training, EJEMPLOS_CANT):
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
