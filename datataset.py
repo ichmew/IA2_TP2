@@ -50,7 +50,7 @@ def genera_data(porcentaje_test):
 
     cantidad_training = int(len(datostranspuestosfiltradoscasteadosnormalizados) * (1 - porcentaje_test))
     aux = np.zeros([cantidad_training, len(datostranspuestosfiltradoscasteadosnormalizados[0])])
-    datostranspuestosfiltradoscasteadosnormalizadosshufleados = np.zeros([len(datostranspuestosfiltradoscasteadosnormalizados), len(datostranspuestosfiltradoscasteadosnormalizados[0])])
+    datostranspuestosfiltradoscasteadosnormalizadosshuffleados = np.zeros([len(datostranspuestosfiltradoscasteadosnormalizados), len(datostranspuestosfiltradoscasteadosnormalizados[0])])
 
     for i in range(0, cantidad_training):
         aux[i][:] = datostranspuestosfiltradoscasteadosnormalizados[i][:]
@@ -58,10 +58,10 @@ def genera_data(porcentaje_test):
     np.random.shuffle(aux)
 
     for i in range(0, cantidad_training):
-        datostranspuestosfiltradoscasteadosnormalizadosshufleados[i][:] = aux[i][:]
+        datostranspuestosfiltradoscasteadosnormalizadosshuffleados[i][:] = aux[i][:]
 
     for i in range(cantidad_training, len(datostranspuestosfiltradoscasteadosnormalizados)):
-        datostranspuestosfiltradoscasteadosnormalizadosshufleados[i][:] = datostranspuestosfiltradoscasteadosnormalizados[i][:]
+        datostranspuestosfiltradoscasteadosnormalizadosshuffleados[i][:] = datostranspuestosfiltradoscasteadosnormalizados[i][:]
 
 
     ejemplos = np.zeros([len(datostranspuestosfiltrados), len(datostranspuestosfiltrados[0]) - 1])
