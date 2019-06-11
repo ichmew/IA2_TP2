@@ -20,10 +20,12 @@ from datataset import dataset_size
 NEURONAS_ENTRADA = 4
 NEURONAS_CAPA_OCULTA = 15
 NEURONAS_SALIDA = 1
-PORCENTAJE_EJEMPLOS_TEST = 0.1
+PORCEN_EJ_TEST = 0.1
+PORCEN_EJ_VAL = 0.1
 EPSILON = 0.1
-EJEMPLOS_CANT = dataset_size(PORCENTAJE_EJEMPLOS_TEST)
-EJEMPLOS_TEST = int(dataset_size(PORCENTAJE_EJEMPLOS_TEST) * PORCENTAJE_EJEMPLOS_TEST)
+EJEMPLOS_CANT = dataset_size(PORCEN_EJ_TEST)
+EJEMPLOS_TEST = int(dataset_size(PORCEN_EJ_TEST) * PORCEN_EJ_TEST)
+EJEMPLOS_VAL = int((EJEMPLOS_CANT - EJEMPLOS_TEST) * PORCEN_EJ_VAL)
 EPOCHS = 60
 CANTIDAD_ENTRADAS_SALIDAS = 1  # depende del dataset, es para el t
 mostrar_e_s = 0
@@ -68,7 +70,7 @@ Wkj = np.zeros([NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA])
 x = np.zeros(NEURONAS_ENTRADA)
 y = np.zeros(NEURONAS_CAPA_OCULTA)
 z = np.zeros(NEURONAS_SALIDA)
-cant_ej_training = EJEMPLOS_CANT - EJEMPLOS_TEST
+cant_ej_training = EJEMPLOS_CANT - EJEMPLOS_TEST - EJEMPLOS_VAL
 tasa_aciertos = 0
 
 
@@ -131,7 +133,7 @@ def calcula_LMS(ejemplos, Wji, Wkj, EJEMPLOS_CANT):
 
     # ejemplos es la matriz de las dataset de donde sacamos las entradas
     # y EJEMPLOS_CANT es la cantidad todal de ejemplos
-    cant_ej_test = int(PORCENTAJE_EJEMPLOS_TEST / 100.0) * EJEMPLOS_CANT
+    cant_ej_test = int(PORC_EJ_TEST / 100.0) * EJEMPLOS_CANT
     cant_ej_training = EJEMPLOS_CANT - cant_ej_test
 
     error_2 = 0
@@ -156,13 +158,14 @@ def calcula_LMS(ejemplos, Wji, Wkj, EJEMPLOS_CANT):
 
 
 def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s):
-    # Se encarga de calcular la tasa de aciertos de cada epoch
+    # Se encarga de calcular la tasa de aciertos del conjunto de validación
+    # de cada epoch
 
     aciertos = 0
     ejemplo = 0
     y = np.zeros(NEURONAS_CAPA_OCULTA)
     z = np.zeros(NEURONAS_SALIDA)
-    for mu in range(0, cant_ej_training):
+    for mu in range(cant_ej_training, cant_ej_training + EJEMPLOS_VAL):
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
         calculo_salidas(Wji, Wkj, x, y, z)
@@ -197,7 +200,7 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s):
         if error == 0:
             aciertos = aciertos + 1
     # Calculamos la tasa de aciertos
-    tasa_aciertos = aciertos / cant_ej_training
+    tasa_aciertos = aciertos / EJEMPLOS_VAL
     return tasa_aciertos
 
 
@@ -209,7 +212,7 @@ def calcula_final(ejemplos, Wji, Wkj, mostrar_e_s):
     ejemplo = 0
     y = np.zeros(NEURONAS_CAPA_OCULTA)
     z = np.zeros(NEURONAS_SALIDA)
-    for mu in range(cant_ej_training, EJEMPLOS_CANT):
+    for mu in range(cant_ej_training + EJEMPLOS_VAL, EJEMPLOS_CANT):
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
         calculo_salidas(Wji, Wkj, x, y, z)
@@ -255,19 +258,18 @@ t = np.zeros([EJEMPLOS_CANT, NEURONAS_SALIDA])
 Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
 Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
 
-dataset_t, ejemplos = genera_data(PORCENTAJE_EJEMPLOS_TEST)
-
+dataset_t, ejemplos = genera_data(PORCEN_EJ_TEST)
 
 for e in range(0, EPOCHS):
-    # TRAINING
-    for mu in range(0, EJEMPLOS_CANT - EJEMPLOS_TEST):
+    # TRAINING AND VALIDATION
+    for mu in range(0, cant_ej_training):
         x = ejemplos[mu][:]
         t = dataset_t[mu][:]
         calculo_salidas(Wji, Wkj, x, y, z)
         bp(Wji, Wkj, x, y, z, t)
     tasa_aciertos = calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s)
     print('Epoch ', e, ': ', tasa_aciertos, '\n')
-    np.random.shuffle
+    dataset_t, ejemplos = genera_data(PORCEN_EJ_TEST)
 
 # waiting = input()
 # TEST / VALIDATION
