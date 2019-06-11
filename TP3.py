@@ -21,10 +21,10 @@ NEURONAS_ENTRADA = 4
 NEURONAS_CAPA_OCULTA = 15
 NEURONAS_SALIDA = 1
 PORCENTAJE_EJEMPLOS_TEST = 5.0
-EPSILON = 0.05
+EPSILON = 0.1
 EJEMPLOS_CANT = dataset_size()
 EJEMPLOS_TEST = int(dataset_size() * 0.1)
-EPOCHS = 8
+EPOCHS = 60
 CANTIDAD_ENTRADAS_SALIDAS = 1  # depende del dataset, es para el t
 mostrar_e_s = 0
 
