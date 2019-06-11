@@ -11,7 +11,7 @@
 #
 
 import math
-import matplotlib
+from matplotlib import pyplot as plt
 import numpy as np
 from datataset import genera_data
 from datataset import dataset_size
@@ -26,7 +26,7 @@ EPSILON = 0.1
 EJEMPLOS_CANT = dataset_size(PORCEN_EJ_TEST)
 EJEMPLOS_TEST = int(dataset_size(PORCEN_EJ_TEST) * PORCEN_EJ_TEST)
 EJEMPLOS_VAL = int((EJEMPLOS_CANT - EJEMPLOS_TEST) * PORCEN_EJ_VAL)
-EPOCHS = 60
+EPOCHS = 100
 CANTIDAD_ENTRADAS_SALIDAS = 1  # depende del dataset, es para el t
 mostrar_e_s = 0
 
@@ -257,9 +257,9 @@ def calcula_final(ejemplos, Wji, Wkj, mostrar_e_s):
 t = np.zeros([EJEMPLOS_CANT, NEURONAS_SALIDA])
 Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
 Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
-
+tasa_aciertos= np.zeros(EPOCHS)
 dataset_t, ejemplos = genera_data(PORCEN_EJ_TEST)
-
+epocas= range(EPOCHS)
 for e in range(0, EPOCHS):
     # TRAINING AND VALIDATION
     for mu in range(0, cant_ej_training):
@@ -267,8 +267,8 @@ for e in range(0, EPOCHS):
         t = dataset_t[mu][:]
         calculo_salidas(Wji, Wkj, x, y, z)
         bp(Wji, Wkj, x, y, z, t)
-    tasa_aciertos = calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s)
-    print('Epoch ', e, ': ', tasa_aciertos, '\n')
+    tasa_aciertos[e] = calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s)
+    print('Epoch ', e, ': ', tasa_aciertos[e], '\n')
     dataset_t, ejemplos = genera_data(PORCEN_EJ_TEST)
 
 # waiting = input()
@@ -276,5 +276,6 @@ for e in range(0, EPOCHS):
 error = 0
 tasa_aciertos_test = calcula_final(ejemplos, Wji, Wkj, mostrar_e_s)
 print('\nTasa de aciertos test = ', tasa_aciertos_test)
-
+plt.plot(epocas,tasa_aciertos)
+plt.show()
 # print('\nTest final:')
