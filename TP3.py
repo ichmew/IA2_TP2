@@ -84,7 +84,7 @@ def calculo_salidas(Wji, Wkj, x, y, z):
     for k in range(0, NEURONAS_SALIDA):
         entrada_z = 0
         for j in range(0, NEURONAS_CAPA_OCULTA):
-            entrada_z = Wkj[j][k] * y[j]
+            entrada_z += Wkj[j][k] * y[j]
         # Sesgo de las neuronas de la cada de salida
         entrada_z -= Wkj[NEURONAS_CAPA_OCULTA - 1][k]
         # Valor de salidad de la neurona k
@@ -162,7 +162,7 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s):
         # Si usamos sólo una neurona, saltamos directamente (es necesario
         # comentar lo que están en el medio) a la verificación de errores.
         # Utilizamos para ello el z de calculo_salidas y el t del dataset.
-        max = z[0]
+        '''max = z[0]
         for k in range(1, NEURONAS_SALIDA):
             if max < z[k]:
                 max = z[k]
@@ -172,7 +172,7 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s):
             else:
                 z[k] = 1.0
         t = np.zeros(NEURONAS_SALIDA)
-        t[int(dataset_t[mu])] = 1
+        t[int(dataset_t[mu - 1])] = 1'''
         # Verificación de aciertos
         error = 0
         if mostrar_e_s == 1:
@@ -197,6 +197,7 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s):
 def calcula_final(ejemplos, Wji, Wkj, mostrar_e_s):
     # Prueba del rendimiento con TEST
 
+    print('\nTEST INICIALIZADO')
     aciertos = 0
     ejemplo = 0
     for mu in range(cant_ej_training, EJEMPLOS_CANT):
@@ -206,7 +207,7 @@ def calcula_final(ejemplos, Wji, Wkj, mostrar_e_s):
         # Si usamos sólo una neurona, saltamos directamente (es necesario
         # comentar lo que están en el medio) a la verificación de errores.
         # Utilizamos para ello el z de calculo_salidas y el t del dataset.
-        max = z[0]
+        '''max = z[0]
         for k in range(1, NEURONAS_SALIDA):
             if max < z[k]:
                 max = z[k]
@@ -216,10 +217,9 @@ def calcula_final(ejemplos, Wji, Wkj, mostrar_e_s):
             else:
                 z[k] = 1.0
         t = np.zeros(NEURONAS_SALIDA)
-        t[int(ejemplos[mu][NEURONAS_SALIDA - 1])] = 1
+        t[int(ejemplos[mu][NEURONAS_SALIDA - 1])] = 1'''
         # Verificación de aciertos
         error = 0
-        print('\nTEST INICIALIZADO\n')
         if mostrar_e_s == 1:
             print(str((ejemplo + 1)), '. z=[')
         for k in range(0, NEURONAS_SALIDA):
