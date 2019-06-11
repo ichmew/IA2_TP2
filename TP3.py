@@ -7,12 +7,13 @@
 # Creado el 04/06/2019
 # Inteligencia Artificial II - Ingeniería en Mecatronica
 # Facultad de Ingeniería - Universidad Nacional de Cuyo
-# Autor: Senastian Giunta, P8 capo, Ichmew
+# Autor: Sebastian Giunta, P8 capo, Ichmew
 #
 
 import math
 import matplotlib
 import numpy as np
+from datataset import genera_data
 
 # Definición de hiperparámetros de la red
 NEURONAS_ENTRADA = 4
@@ -20,10 +21,10 @@ NEURONAS_CAPA_OCULTA = 15
 NEURONAS_SALIDA = 4
 PORCENTAJE_EJEMPLOS_TEST = 5.0
 EPSILON = 0.4
-EJEMPLOS = 1000
+EJEMPLOS_CANT = 1000
 EJEMPLOS_TEST = 100
 EPOCHS = 10000
-CANTIDAD_ENTRADAS_SALIDAS = 888888888  # depende del dataset, es para el t
+CANTIDAD_ENTRADAS_SALIDAS = 1  # depende del dataset, es para el t
 mostrar_e_s = 1
 
 
@@ -56,11 +57,13 @@ def g_derivada(x):
 
 
 # Cálculo de las salidas de cada capa y de las salidas finales
-Wji = np.zeros(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
-Wkj = np.zeros(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
+Wji = np.zeros[NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA]
+Wkj = np.zeros[NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA]
 x = np.zeros(NEURONAS_ENTRADA)
 y = np.zeros(NEURONAS_CAPA_OCULTA)
 z = np.zeros(NEURONAS_SALIDA)
+cant_ej_training = EJEMPLOS_CANT - EJEMPLOS_TEST
+tasa_aciertos= 0
 
 
 def calculo_salidas(Wji, Wkj, x, y, z):
@@ -117,16 +120,16 @@ def bp(Wji, Wjk, x, y, z, t):
         Wji[NEURONAS_ENTRADA][j] += EPSILON * delta_mu_j * -1
 
 '''
-def calcula_LMS(ejemplos, Wji, Wkj, EJEMPLOS):
+def calcula_LMS(ejemplos, Wji, Wkj, EJEMPLOS_CANT):
     # Se encarga del validation??
 
     # ejemplos es la matriz de las dataset de donde sacamos las entradas
-    # y EJEMPLOS es la cantidad todal de ejemplos
-    cant_ej_test = int(PORCENTAJE_EJEMPLOS_TEST / 100.0) * EJEMPLOS
-    cant_ej_training = EJEMPLOS - cant_ej_test
+    # y EJEMPLOS_CANT es la cantidad todal de ejemplos
+    cant_ej_test = int(PORCENTAJE_EJEMPLOS_TEST / 100.0) * EJEMPLOS_CANT
+    cant_ej_training = EJEMPLOS_CANT - cant_ej_test
 
     error_2 = 0
-    for mu in range(cant_ej_training, EJEMPLOS):
+    for mu in range(cant_ej_training, EJEMPLOS_CANT):
         # Probamos el rendimiento de la red en los ejemplos del dataset que
         # estan A PARTIR del ultimo ejemplo de entrenamiento
         for i in range(0, NEURONAS_ENTRADA):
@@ -146,7 +149,7 @@ def calcula_LMS(ejemplos, Wji, Wkj, EJEMPLOS):
     return error_2_medio'''
 
 
-def calcula_rendimiento(ejemplos, Wji, Wkj, cant_total_ej, mostrar_e_s):
+def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s):
     # Se encarga de calcular la tasa de aciertos de cada epoch
 
     aciertos = 0
@@ -236,27 +239,29 @@ def calcula_final(ejemplos, Wji, Wkj, cant_total_ej, mostrar_e_s):
 
 
 # MAIN ------------------------------------------------------------------------
-t = np.zeros(EJEMPLOS, NEURONAS_SALIDA)
+t = np.zeros[EJEMPLOS_CANT, NEURONAS_SALIDA]
 Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
 Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
 
-# genera_dataset(x, t)
+dataset_t,ejemplos=genera_data()
+
 
 for e in range(0, EPOCHS):
     # TRAINING
-    for mu in range(0, EJEMPLOS - EJEMPLOS_TEST):
-        x = dataset[mu][:]
+    for mu in range(0, EJEMPLOS_CANT - EJEMPLOS_TEST):
+        x = ejemplos[mu][:]
         t = dataset_t[mu][:]
         calculo_salidas(Wji, Wkj, x, y, z)
         bp(Wji, Wkj, x, y, z, t)
-    calcula_rendimiento(ejemplos, Wji, Wkj, cant_total_ej, mostrar_e_s)
+    calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s)
     print('Epoch ', e, ': ', tasa_aciertos, '\n')
 
 # waiting = input()
 # TEST / VALIDATION
 error = 0
-for mu in range(EJEMPLOS - EJEMPLOS_TEST, EJEMPLOS):
+'''for mu in range(EJEMPLOS_CANT - EJEMPLOS_TEST, EJEMPLOS_CANT):
     calculo_salidas(Wji, Wkj, x[mu], y, z)
     error +=
 
-# print('\nTest final:')
+# print('\nTest final:')'''
+
