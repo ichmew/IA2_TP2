@@ -14,6 +14,7 @@ import math
 import matplotlib
 import numpy as np
 from datataset import genera_data
+from datataset import dataset_size
 
 # Definición de hiperparámetros de la red
 NEURONAS_ENTRADA = 4
