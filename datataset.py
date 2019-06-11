@@ -47,3 +47,9 @@ def genera_data():
             ejemplos[i][j] = datostranspuestosfiltradoscasteados[i][j]
 
     return t, ejemplos
+
+
+def dataset_size():
+        cant_datos = len(datostranspuestosfiltradoscasteados)
+        return cant_datos 
+
