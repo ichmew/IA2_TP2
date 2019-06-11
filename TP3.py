@@ -277,5 +277,7 @@ error = 0
 tasa_aciertos_test = calcula_final(ejemplos, Wji, Wkj, mostrar_e_s)
 print('\nTasa de aciertos test = ', tasa_aciertos_test)
 plt.plot(epocas,tasa_aciertos)
+plt.ylabel('Tasa de Aciertos')
+plt.xlabel('Epoca')
 plt.show()
-# print('\nTest final:')
+
