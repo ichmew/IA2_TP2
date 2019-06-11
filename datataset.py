@@ -67,3 +67,4 @@ def dataset_size():
         dataset_t, ejemplos = genera_data()
         cant_datos = len(ejemplos)
         return cant_datos 
+putooooo
