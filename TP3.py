@@ -20,11 +20,11 @@ from datataset import dataset_size
 NEURONAS_ENTRADA = 4
 NEURONAS_CAPA_OCULTA = 15
 NEURONAS_SALIDA = 1
-PORCENTAJE_EJEMPLOS_TEST = 5.0
-EPSILON = 0.05
-EJEMPLOS_CANT = dataset_size()
-EJEMPLOS_TEST = int(dataset_size() * 0.1)
-EPOCHS = 8
+PORCENTAJE_EJEMPLOS_TEST = 0.1
+EPSILON = 0.1
+EJEMPLOS_CANT = dataset_size(PORCENTAJE_EJEMPLOS_TEST)
+EJEMPLOS_TEST = int(dataset_size(PORCENTAJE_EJEMPLOS_TEST) * PORCENTAJE_EJEMPLOS_TEST)
+EPOCHS = 60
 CANTIDAD_ENTRADAS_SALIDAS = 1  # depende del dataset, es para el t
 mostrar_e_s = 0
 
@@ -255,7 +255,7 @@ t = np.zeros([EJEMPLOS_CANT, NEURONAS_SALIDA])
 Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
 Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
 
-dataset_t, ejemplos = genera_data()
+dataset_t, ejemplos = genera_data(PORCENTAJE_EJEMPLOS_TEST)
 
 
 for e in range(0, EPOCHS):
@@ -267,6 +267,7 @@ for e in range(0, EPOCHS):
         bp(Wji, Wkj, x, y, z, t)
     tasa_aciertos = calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s)
     print('Epoch ', e, ': ', tasa_aciertos, '\n')
+    np.random.shuffle
 
 # waiting = input()
 # TEST / VALIDATION
