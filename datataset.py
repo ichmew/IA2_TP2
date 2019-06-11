@@ -50,6 +50,7 @@ def genera_data():
 
 
 def dataset_size():
-        cant_datos = len(datostranspuestosfiltradoscasteados)
+        dataset_t, ejemplos= genera_data()
+        cant_datos = len(ejemplos)
         return cant_datos 
 
