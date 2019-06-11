@@ -19,7 +19,7 @@ from datataset import dataset_size
 # Definición de hiperparámetros de la red
 NEURONAS_ENTRADA = 4
 NEURONAS_CAPA_OCULTA = 15
-NEURONAS_SALIDA = 4
+NEURONAS_SALIDA = 1
 PORCENTAJE_EJEMPLOS_TEST = 5.0
 EPSILON = 0.4
 EJEMPLOS_CANT = dataset_size()
@@ -58,8 +58,8 @@ def g_derivada(x):
 
 
 # Cálculo de las salidas de cada capa y de las salidas finales
-Wji = np.zeros[NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA]
-Wkj = np.zeros[NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA]
+Wji = np.zeros([NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA])
+Wkj = np.zeros([NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA])
 x = np.zeros(NEURONAS_ENTRADA)
 y = np.zeros(NEURONAS_CAPA_OCULTA)
 z = np.zeros(NEURONAS_SALIDA)
@@ -100,12 +100,12 @@ def bp(Wji, Wjk, x, y, z, t):
         h_mu_k = 0
         for j in range(0, NEURONAS_CAPA_OCULTA):
             h_mu_k += Wkj[j][k] * y[j]
-        h_mu_k -= Wkj[NEURONAS_CAPA_OCULTA][k]
+        h_mu_k -= Wkj[NEURONAS_CAPA_OCULTA - 1][k]
         delta_mu_k[k] = (t[k] - g(h_mu_k)) * g_derivada(h_mu_k)
         for j in range(0, NEURONAS_CAPA_OCULTA):
             Wkj[j][k] += EPSILON * delta_mu_k[k] * y[j]
 
-        Wkj[NEURONAS_CAPA_OCULTA][k] += EPSILON * delta_mu_k[k] * -1
+        Wkj[NEURONAS_CAPA_OCULTA - 1][k] += EPSILON * delta_mu_k[k] * -1
     # Actualización pesos capa entrada-capa oculta
     for j in range(0, NEURONAS_CAPA_OCULTA):
         h_mu_j = 0
