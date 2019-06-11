@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-def genera_data():
+def genera_data(porcentaje_test):
 
     datos = pd.read_csv('titanic_train.csv', header=0, na_filter=False)
 
@@ -35,21 +35,55 @@ def genera_data():
                 datostranspuestosfiltradoscasteados[i][j] = float(3)
         datostranspuestosfiltradoscasteados[i][1] = float(datostranspuestosfiltrados[i][1])
 
-    df = pd.DataFrame(datostranspuestosfiltradoscasteados)
+
+    datostranspuestosfiltradoscasteadosnormalizados = np.zeros([len(datostranspuestosfiltradoscasteados), len(datostranspuestosfiltradoscasteados[0])])
+    edadmaxima = 0    
+    for i in range (0, len(datostranspuestosfiltradoscasteados)):
+        if datostranspuestosfiltradoscasteados[i][1] > edadmaxima:
+            edadmaxima = datostranspuestosfiltradoscasteados[i][1]
+
+    for i in range (0, len(datostranspuestosfiltradoscasteados)):
+        datostranspuestosfiltradoscasteadosnormalizados[i][0] = datostranspuestosfiltradoscasteados[i][0]
+        datostranspuestosfiltradoscasteadosnormalizados[i][1] = datostranspuestosfiltradoscasteados[i][1]/edadmaxima
+        datostranspuestosfiltradoscasteadosnormalizados[i][2] = datostranspuestosfiltradoscasteados[i][2]/3
+        datostranspuestosfiltradoscasteadosnormalizados[i][3] = datostranspuestosfiltradoscasteados[i][3]/3
+        datostranspuestosfiltradoscasteadosnormalizados[i][4] = datostranspuestosfiltradoscasteados[i][4]
+    
+    cantidad_training= int (len(datostranspuestosfiltradoscasteadosnormalizados)*(1-porcentaje_test))
+    aux = np.zeros([cantidad_training, len(datostranspuestosfiltradoscasteadosnormalizados[0])])
+    datostranspuestosfiltradoscasteadosnormalizadosshufleados = np.zeros([len(datostranspuestosfiltradoscasteadosnormalizados), len(datostranspuestosfiltradoscasteadosnormalizados[0])])
+   
+    for i in range(0,cantidad_training):
+        aux[i][:]=datostranspuestosfiltradoscasteadosnormalizados[i][:]
+    
+    np.random.shuffle(aux)
+
+    for i in range(0,cantidad_training):
+        datostranspuestosfiltradoscasteadosnormalizadosshufleados[i][:]=aux[i][:]
+
+    for i in range(cantidad_training,len(datostranspuestosfiltradoscasteadosnormalizados)):
+        datostranspuestosfiltradoscasteadosnormalizadosshufleados[i][:]= datostranspuestosfiltradoscasteadosnormalizados[i][:]
+
+
+
+
+    ejemplos = np.zeros([len(datostranspuestosfiltrados), len(datostranspuestosfiltrados[0])-1])
+    dataset_t = np.zeros([len(datostranspuestosfiltrados),1])
+
+    for i in range(0, len(datostranspuestosfiltradoscasteadosnormalizadosshufleados)):
+        dataset_t[i] = datostranspuestosfiltradoscasteadosnormalizadosshufleados[i][4]
+        for j in range(0, len(datostranspuestosfiltradoscasteadosnormalizadosshufleados[0])-1):
+            ejemplos[i][j] = datostranspuestosfiltradoscasteadosnormalizadosshufleados[i][j]  
+   
+    df = pd.DataFrame(datostranspuestosfiltradoscasteadosnormalizados)
     df.to_csv('datos_filtrados_train.csv')
-
-    ejemplos = np.zeros([len(datostranspuestosfiltrados), len(datostranspuestosfiltrados[0]) - 1])
-    dataset_t = np.zeros(len(datostranspuestosfiltrados))
-
-    for i in range(0, len(datostranspuestosfiltradoscasteados)):
-        dataset_t[i] = datostranspuestosfiltradoscasteados[i][4]
-        for j in range(0, len(datostranspuestosfiltradoscasteados[0]) - 1):
-            ejemplos[i][j] = datostranspuestosfiltradoscasteados[i][j]
-
+    df = pd.DataFrame(datostranspuestosfiltradoscasteadosnormalizadosshufleados)
+    df.to_csv('datos_filtrados_train_shuffle.csv')
+   
     return dataset_t, ejemplos
 
-
-def dataset_size():
-        dataset_t, ejemplos = genera_data()
+    
+def dataset_size(porcentaje_test):
+        dataset_t, ejemplos = genera_data(porcentaje_test)
         cant_datos = len(ejemplos)
-        return cant_datos
+        return cant_datos 
