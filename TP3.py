@@ -21,7 +21,7 @@ NEURONAS_ENTRADA = 4
 NEURONAS_CAPA_OCULTA = 15
 NEURONAS_SALIDA = 1
 PORCENTAJE_EJEMPLOS_TEST = 5.0
-EPSILON = 0.05
+EPSILON = 0.01
 EJEMPLOS_CANT = dataset_size()
 EJEMPLOS_TEST = int(dataset_size() * 0.1)
 EPOCHS = 8
@@ -211,6 +211,7 @@ def calcula_final(ejemplos, Wji, Wkj, mostrar_e_s):
     y = np.zeros(NEURONAS_CAPA_OCULTA)
     z = np.zeros(NEURONAS_SALIDA)
     for mu in range(cant_ej_training, EJEMPLOS_CANT):
+        t = dataset_t[mu][:]
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
         calculo_salidas(Wji, Wkj, x, y, z)
