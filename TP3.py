@@ -15,19 +15,55 @@ import matplotlib
 import numpy as np
 from datataset import genera_data
 from datataset import dataset_size
+from matplotlib import pyplot
 
 # Definición de hiperparámetros de la red
 NEURONAS_ENTRADA = 4
 NEURONAS_CAPA_OCULTA = 15
 NEURONAS_SALIDA = 1
 PORCENTAJE_EJEMPLOS_TEST = 5.0
-EPSILON = 0.05
+EPSILON = 0.008
 EJEMPLOS_CANT = dataset_size()
 EJEMPLOS_TEST = int(dataset_size() * 0.1)
-EPOCHS = 10
+EPOCHS = 300
 CANTIDAD_ENTRADAS_SALIDAS = 1  # depende del dataset, es para el t
 mostrar_e_s = 0
 
+
+# Función de activación Heavyside de la capa de entrada
+def Heavy(nox0):
+    if nox0 >= 0:
+        return 1
+    else:
+        return 0
+
+
+# Derivada de la función de activación Heavyside de la capa de entrada
+def H_derivada(nox4):
+    return 1
+
+
+# Función de activación sigmoide de la capa de entrada
+def f(nox1):
+    return 1 / (1 + math.exp(-nox1))
+
+
+# Derivada de la función de activación de la capa de entrada
+def f_derivada(nox2):
+    return math.exp(-nox2) / ((1 + math.exp(-nox2)) * (1 + math.exp(-nox2)))
+
+
+# Función de activación de la capa oculta
+def g(nox3):
+    return nox3
+
+
+# Derivada de la función de activación de la capa oculta
+def g_derivada(nox3):
+    return 1
+
+
+# Cálculo de las salidas de cada capa y de las salidas finales
 Wji = np.zeros([NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA])
 Wkj = np.zeros([NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA])
 x = np.zeros(NEURONAS_ENTRADA)
@@ -37,39 +73,7 @@ cant_ej_training = EJEMPLOS_CANT - EJEMPLOS_TEST
 tasa_aciertos = 0
 
 
-
-# Función de activación Heavyside de la capa de entrada
-def Heavy(nox):
-    if nox >= 0:
-        return 1
-    else:
-        return 0
-
-
-# Función de activación sigmoide de la capa de entrada
-def f(nox): 
-    # print(nox)
-    fun = 1 / (1 + math.exp(-nox))
-    return fun
-
-
-# Derivada de la función de activación de la capa de entrada
-def f_derivada(nox):
-    return (math.exp(-nox)) / ((1 + math.exp(-nox)) * (1 + math.exp(-nox)))
-
-
-# Función de activación de la capa oculta
-def g(nox):
-    return nox
-
-
-# Derivada de la función de activación de la capa oculta
-def g_derivada(nox):
-    return 1
-
-
-# Cálculo de las salidas de cada capa y de las salidas finales
-def calculo_salidas():
+def calculo_salidas(Wji, Wkj, x, y, z):
     # Se encarga de calcular la salida z de cada neurona
 
     # Cálculo de salidas de la capa oculta
@@ -93,7 +97,7 @@ def calculo_salidas():
         z[k] = g(entrada_z)
 
 
-def bp():
+def bp(Wji, Wjk, x, y, z, t):
     # Se encarga de actualizar los pesos sinápticos
 
     delta_mu_k = np.zeros(NEURONAS_SALIDA)
@@ -101,87 +105,44 @@ def bp():
     for k in range(0, NEURONAS_SALIDA):
         h_mu_k = 0
         for j in range(0, NEURONAS_CAPA_OCULTA):
-            h_mu_k += Wkj[j][k]*y[j]
+            h_mu_k += Wkj[j][k] * y[j]
         h_mu_k -= Wkj[NEURONAS_CAPA_OCULTA - 1][k]
-        
         delta_mu_k[k] = (t[k] - g(h_mu_k)) * g_derivada(h_mu_k)
         for j in range(0, NEURONAS_CAPA_OCULTA):
             Wkj[j][k] += EPSILON * delta_mu_k[k] * y[j]
-        Wkj[NEURONAS_CAPA_OCULTA - 1][k] += EPSILON * delta_mu_k[k] * (-1)
 
-    delta_mu_j = np.zeros(NEURONAS_CAPA_OCULTA)
+        Wkj[NEURONAS_CAPA_OCULTA - 1][k] += EPSILON * delta_mu_k[k] * - 1
     # Actualización pesos capa entrada-capa oculta
     for j in range(0, NEURONAS_CAPA_OCULTA):
         h_mu_j = 0
         for i in range(0, NEURONAS_ENTRADA):
             h_mu_j += Wji[i][j] * x[i]
         h_mu_j -= Wji[NEURONAS_ENTRADA - 1][j]
-        # delta_mu_j = 0
+        delta_mu_j = 0
         for k in range(0, NEURONAS_SALIDA):
-            delta_mu_j[j] += delta_mu_k[k] * Wkj[j][k]
-        delta_mu_j[j] *= f_derivada(h_mu_j)
+            delta_mu_j += delta_mu_k[k] * Wkj[j][k]
+        delta_mu_j *= f_derivada(h_mu_j)
         for i in range(0, NEURONAS_ENTRADA):
-            Wji[i][j] += EPSILON * delta_mu_j[j] * x[i]
-        Wji[NEURONAS_ENTRADA - 1][j] += EPSILON * delta_mu_j[j] * (-1)
+            Wji[i][j] += EPSILON * delta_mu_j * x[i]
+        Wji[NEURONAS_ENTRADA - 1][j] += EPSILON * delta_mu_j * -1
 
 
-def calcula_rendimiento():
+def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s, t):
     # Se encarga de calcular la tasa de aciertos de cada epoch
 
     aciertos = 0
     ejemplo = 0
+    y = np.zeros(NEURONAS_CAPA_OCULTA)
+    z = np.zeros(NEURONAS_SALIDA)
     for mu in range(0, cant_ej_training):
-        for i in range(0, NEURONAS_ENTRADA):
-            x[i] = ejemplos[mu][i]
-        calculo_salidas()
-        # Si usamos sólo una neurona, saltamos directamente (es necesario
-        # comentar lo que están en el medio) a la verificación de errores.
-        # Utilizamos para ello el z de calculo_salidas y el t del dataset.
-        # max = z[0]
-        # for k in range(1, NEURONAS_SALIDA):
-        #     if max < z[k]:
-        #         max = z[k]
-        # for k in range(0, NEURONAS_SALIDA):
-        #     if max != z[k]:
-        #         z[k] = 0
-        #     else:
-        #         z[k] = 1.0
-        #  tt = np.zeros(NEURONAS_SALIDA)
-        #  tt[int(dataset_t[mu])] = 1
-        # Verificación de aciertos
-        error = 0
-        # if mostrar_e_s == 1:
-        #     print(str((ejemplo + 1)), '. z=[')
-        for k in range(0, NEURONAS_SALIDA):
-            error += round(pow(pow(t[k] - z[k], 2), 0.5))
-            if mostrar_e_s == 1:
-                print(str(z[k - 1]))
-        if mostrar_e_s == 1:
-            # print('] -- t=[')
-            for k in range(0, NEURONAS_SALIDA):
-                print(str(t[k - 1]))
-            # print(']\n')
-            ejemplo = ejemplo + 1
-        if error == 0:
-            aciertos = aciertos + 1
-    # Calculamos la tasa de aciertos
-    tasa_aciertos = aciertos / cant_ej_training
-    return tasa_aciertos
-
-
-def calcula_final():
-
-    # Prueba del rendimiento con TEST
-    aciertos = 0
-    ejemplo = 0
-    for mu in range(cant_ej_training, cant_total_ej):
+        t = dataset_t[mu][:]
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
         calculo_salidas(Wji, Wkj, x, y, z)
         # Si usamos sólo una neurona, saltamos directamente (es necesario
         # comentar lo que están en el medio) a la verificación de errores.
         # Utilizamos para ello el z de calculo_salidas y el t del dataset.
-        max = z[0]
+        '''max = z[0]
         for k in range(1, NEURONAS_SALIDA):
             if max < z[k]:
                 max = z[k]
@@ -191,7 +152,57 @@ def calcula_final():
             else:
                 z[k] = 1.0
         t = np.zeros(NEURONAS_SALIDA)
-        t[int(ejemplos[mu][NEURONAS_SALIDA - 1])] = 1
+        t[int(dataset_t[mu - 1])] = 1'''
+        # Verificación de aciertos
+        error = 0
+        if mostrar_e_s == 1:
+            print(str((ejemplo + 1)), '. z = [')
+        for k in range(0, NEURONAS_SALIDA):
+            error += round(pow(pow(t[k] - z[k], 2), 0.5))
+            # print(t[k])
+            if mostrar_e_s == 1:
+                print(str(z[k]))
+        if mostrar_e_s == 1:
+            print(']')
+            print('   t = [')
+            for k in range(0, NEURONAS_SALIDA):
+                print(str(t[k]))
+            print(']\n')
+            ejemplo = ejemplo + 1
+        if error == 0:
+            aciertos = aciertos + 1
+    # Calculamos la tasa de aciertos
+    tasa_aciertos = aciertos / cant_ej_training
+    return tasa_aciertos
+
+
+def calcula_final(ejemplos, Wji, Wkj, mostrar_e_s):
+    # Prueba del rendimiento con TEST
+
+    print('\nTEST INICIALIZADO')
+    aciertos = 0
+    ejemplo = 0
+    y = np.zeros(NEURONAS_CAPA_OCULTA)
+    z = np.zeros(NEURONAS_SALIDA)
+    for mu in range(cant_ej_training, EJEMPLOS_CANT):
+        t = dataset_t[mu][:]
+        for i in range(0, NEURONAS_ENTRADA):
+            x[i] = ejemplos[mu][i]
+        calculo_salidas(Wji, Wkj, x, y, z)
+        # Si usamos sólo una neurona, saltamos directamente (es necesario
+        # comentar lo que están en el medio) a la verificación de errores.
+        # Utilizamos para ello el z de calculo_salidas y el t del dataset.
+        '''max = z[0]
+        for k in range(1, NEURONAS_SALIDA):
+            if max < z[k]:
+                max = z[k]
+        for k in range(0, NEURONAS_SALIDA):
+            if max != z[k]:
+                z[k] = 0
+            else:
+                z[k] = 1.0
+        t = np.zeros(NEURONAS_SALIDA)
+        t[int(ejemplos[mu][NEURONAS_SALIDA - 1])] = 1'''
         # Verificación de aciertos
         error = 0
         if mostrar_e_s == 1:
@@ -209,40 +220,67 @@ def calcula_final():
         if error == 0:
             aciertos = aciertos + 1
     # Calculamos la tasa de aciertos
-    tasa_aciertos = aciertos / cant_ej_test
-
-# def genera_dataset(x, t):
+    tasa_aciertos = aciertos / EJEMPLOS_TEST
+    return tasa_aciertos
 
 
 # MAIN ------------------------------------------------------------------------
 t = np.zeros([EJEMPLOS_CANT, NEURONAS_SALIDA])
-Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
-Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
+# Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
+# Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
 
 dataset_t, ejemplos = genera_data()
-# t = dataset_t
 
 
-for e in range(0, EPOCHS):
-    # TRAINING
-    for mu in range(0, EJEMPLOS_CANT - EJEMPLOS_TEST):
-        x = ejemplos[mu][:]
-        # print(x)
-        t = dataset_t[mu][:]
-        # print(z)
-        calculo_salidas()
-        # print(z)
-        bp()
-    calcula_rendimiento()
-    print('Epoch ', e, ': ', tasa_aciertos, '\n')
-    
+plot_epsilon = []
+plot_test = []
+plot_EPOCHS = []
+plot_aciertos = []
 
-# waiting = input()
-# TEST / VALIDATION
-error = 0
-'''for mu in range(EJEMPLOS_CANT - EJEMPLOS_TEST, EJEMPLOS_CANT):
-    calculo_salidas(Wji, Wkj, x[mu], y, z)
-    error +=
+#Se puede ir bajando el ritmo de aprendizaje cada cierta cantidad de épocas???
+# eps_varios = [0.001, 0.002, 0.003, 0.004, 0.005, 0.010, 0.015, 0.020, 0.015, 0.010, 0.005, 0.004, 0.003, 0.002, 0.001]
+# eps_varios = [0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035, 0.040, 0.045, 0.050]
+eps_varios = [0.002]
+for q in range(0, len(eps_varios)):
+    EPSILON = eps_varios[q]
+    plot_epsilon.append(eps_varios[q])
+    # plot_EPOCHS = []
+    # plot_aciertos = []
+    # t = np.zeros([EJEMPLOS_CANT, NEURONAS_SALIDA])
+    # Wji = np.random.rand(NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA)
+    # Wkj = np.random.rand(NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA)
+    # Wji = np.zeros([NEURONAS_ENTRADA, NEURONAS_CAPA_OCULTA])
+    # Wkj = np.zeros([NEURONAS_CAPA_OCULTA, NEURONAS_SALIDA])
+    for e in range(0, EPOCHS):
+        # TRAINING
+        for mu in range(0, EJEMPLOS_CANT - EJEMPLOS_TEST):
+            x = ejemplos[mu][:]
+            t = dataset_t[mu][:]
+            calculo_salidas(Wji, Wkj, x, y, z)
+            bp(Wji, Wkj, x, y, z, t)
+        tasa_aciertos = calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s, t)
+        print('Epoch ', e, ': ', tasa_aciertos, '\n')
+        plot_EPOCHS.append(e+20*q)
+        plot_aciertos.append(tasa_aciertos)
 
-# print('\nTest final:')'''
+    # waiting = input()
+    # TEST / VALIDATION
+    error = 0
+    tasa_aciertos_test = calcula_final(ejemplos, Wji, Wkj, mostrar_e_s)
+    print('\nTasa de aciertos test = ', tasa_aciertos_test)
+    plot_test.append(tasa_aciertos_test)
+
+    # print('\nTest final:')
+pyplot.figure(q)
+pyplot.plot(plot_EPOCHS, plot_aciertos)
+pyplot.ylabel('Tasa de aciertos')
+pyplot.xlabel('EPOCHS')
+
+
+pyplot.figure(q+1)
+pyplot.plot(plot_epsilon, plot_test)
+pyplot.ylabel('Tasa de aciertos test')
+pyplot.xlabel('Epsilon')
+
+pyplot.show()
 
