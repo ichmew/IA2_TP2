@@ -19,15 +19,15 @@ from matplotlib import pyplot
 
 # Definición de hiperparámetros de la red
 NEURONAS_ENTRADA = 4
-NEURONAS_CAPA_OCULTA = 15
+NEURONAS_CAPA_OCULTA = 40
 NEURONAS_SALIDA = 1
 PORCEN_EJ_TEST = 0.1
 PORCEN_EJ_VAL = 0.1
-EPSILON = 0.01
+EPSILON = 0.005  # Se reemplaza abajo en la línea 244
 EJEMPLOS_CANT = dataset_size(PORCEN_EJ_TEST)
 EJEMPLOS_TEST = int(dataset_size(PORCEN_EJ_TEST) * PORCEN_EJ_TEST)
 EJEMPLOS_VAL = int((EJEMPLOS_CANT - EJEMPLOS_TEST) * PORCEN_EJ_VAL)
-EPOCHS = 1000
+EPOCHS = 10
 CANTIDAD_ENTRADAS_SALIDAS = 1  # depende del dataset, es para el t
 mostrar_e_s = 0
 
@@ -236,6 +236,7 @@ plot_epsilon = []
 plot_test = []
 plot_EPOCHS = []
 plot_aciertos = []
+plot_resultado = []
 
 # Se puede ir bajando el ritmo de aprendizaje cada cierta cantidad de épocas???
 # eps_varios = [0.001, 0.002, 0.003, 0.004, 0.005, 0.010, 0.015, 0.020, 0.015, 0.010, 0.005, 0.004, 0.003, 0.002, 0.001]
@@ -270,10 +271,12 @@ for q in range(0, len(eps_varios)):
     tasa_aciertos_test = calcula_final(ejemplos, Wji, Wkj, mostrar_e_s)
     print('\nTasa de aciertos test = ', tasa_aciertos_test)
     plot_test.append(tasa_aciertos_test)
+    plot_resultado = np.zeros(EPOCHS) + tasa_aciertos_test
 
     # print('\nTest final:')
 pyplot.figure(q)
 pyplot.plot(plot_EPOCHS, plot_aciertos)
+pyplot.plot(plot_EPOCHS, plot_resultado)
 pyplot.ylabel('Tasa de aciertos')
 pyplot.xlabel('EPOCHS')
 
