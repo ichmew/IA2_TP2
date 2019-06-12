@@ -22,7 +22,7 @@ NEURONAS_CAPA_OCULTA = 15
 NEURONAS_SALIDA = 1
 PORCEN_EJ_TEST = 0.1
 PORCEN_EJ_VAL = 0.1
-EPSILON = 0.1
+EPSILON = 0.01
 EJEMPLOS_CANT = dataset_size(PORCEN_EJ_TEST)
 EJEMPLOS_TEST = int(dataset_size(PORCEN_EJ_TEST) * PORCEN_EJ_TEST)
 EJEMPLOS_VAL = int((EJEMPLOS_CANT - EJEMPLOS_TEST) * PORCEN_EJ_VAL)
@@ -166,6 +166,7 @@ def calcula_rendimiento(ejemplos, Wji, Wkj, mostrar_e_s):
     y = np.zeros(NEURONAS_CAPA_OCULTA)
     z = np.zeros(NEURONAS_SALIDA)
     for mu in range(cant_ej_training, cant_ej_training + EJEMPLOS_VAL):
+        t = dataset_t[mu][:]
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
         calculo_salidas(Wji, Wkj, x, y, z)
@@ -213,6 +214,7 @@ def calcula_final(ejemplos, Wji, Wkj, mostrar_e_s):
     y = np.zeros(NEURONAS_CAPA_OCULTA)
     z = np.zeros(NEURONAS_SALIDA)
     for mu in range(cant_ej_training + EJEMPLOS_VAL, EJEMPLOS_CANT):
+        t = dataset_t[mu][:]
         for i in range(0, NEURONAS_ENTRADA):
             x[i] = ejemplos[mu][i]
         calculo_salidas(Wji, Wkj, x, y, z)
@@ -276,9 +278,7 @@ for e in range(0, EPOCHS):
 error = 0
 tasa_aciertos_test = calcula_final(ejemplos, Wji, Wkj, mostrar_e_s)
 print('\nTasa de aciertos test = ', tasa_aciertos_test)
-#Plotear La tasa de aciertos
 plt.plot(epocas,tasa_aciertos)
 plt.ylabel('Tasa de Aciertos')
 plt.xlabel('Epoca')
 plt.show()
-
